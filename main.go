@@ -8,7 +8,10 @@ import (
     "time"
 )
 
-func wave(period, amp float64, offset int, sig chan string) {
+// Wave draws asin curve with given period and amplitude and sends out
+// the string on given channel.
+// The length of each string is amp*2. Spaces are padded to the front and end.
+func Wave(period, amp float64, offset int, sig chan<- string) {
     for {
         for x := 1.0; x >= 0.0; x -= 1.0 / period {
             l := int(math.Ceil((2 * math.Asin(x) / math.Pi) * amp))
@@ -32,16 +35,16 @@ func wave(period, amp float64, offset int, sig chan string) {
 
 func main() {
     // parse arguments
-    period := flag.Int("p", 20, "Period: length (lines) of wave")
-    amp := flag.Int("a", 20, "Amplitude: width (chars) of wave")
+    period := flag.Int("p", 25, "Period: length (lines) of wave")
+    amp := flag.Int("a", 25, "Amplitude: width (chars) of wave")
     num := flag.Int("n", 2, "Number of waves")
-    freq := flag.Int("f", 20, "Frequency of waves (Hz)")
+    freq := flag.Int("f", 40, "Frequency of waves (Hz)")
     flag.Parse()
     sigs := make([]chan string, *num)
     // start up the waves
     for i, _ := range sigs {
         sigs[i] = make(chan string)
-        go wave(float64(*period), float64(*amp), 0, sigs[i])
+        go Wave(float64(*period), float64(*amp), 0, sigs[i])
     }
     // sync up the waves at some frequency in Hz
     go func(frequency int, sigs []chan string) {
