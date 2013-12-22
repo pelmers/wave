@@ -12,21 +12,27 @@ import (
 // the string on given channel.
 // The length of each string is amp*2. Spaces are padded to the front and end.
 func Wave(period, amp float64, offset int, sig chan<- string) {
+    step := 1.0/period
     for {
-        for x := 1.0; x >= 0.0; x -= 1.0 / period {
+        for x := 1.0; x >= 0.0; x -= step {
             l := int(math.Ceil((2 * math.Asin(x) / math.Pi) * amp))
             r := int(math.Floor((amp - float64(l)) * 2))
             e := int(amp)*2 - l - r
+            // fix rounding misalignment
             if x == 1.0 {
                 e--
             }
             sig <- fmt.Sprintf("%*s%*s%*s", l+offset, "*",
                 r+offset, "*", e+offset, "")
         }
-        for x := 1.0 / period; x <= 1.0; x += 1.0 / period {
+        for x := step; x < 1.0; x += step {
             l := int(math.Ceil((2 * math.Asin(x) / math.Pi) * amp))
             r := int(math.Floor((amp - float64(l)) * 2))
             e := int(amp)*2 - l - r
+            // fix rounding misalignment
+            if x > 1.0 - step {
+                e--
+            }
             sig <- fmt.Sprintf("%*s%*s%*s", l+offset, "*",
                 r+offset, "*", e+offset, "")
         }
