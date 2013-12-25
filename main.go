@@ -1,3 +1,5 @@
+// Wave draws arcsine curves!
+// Specify period, amplitude, frequency and number for some pretty pictures.
 package main
 
 import (
