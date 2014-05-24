@@ -63,7 +63,7 @@ func main() {
     amp := flag.Int("a", 25, "Amplitude: width (chars) of wave")
     num := flag.Int("n", 2, "Number of waves")
     freq := flag.Int("f", 40, "Frequency of waves (Hz)")
-    colorize := flag.String("colorize", "lgreen", "Output color (default for none)")
+    colorize := flag.String("color", "lgreen", "Output color (default for none)")
     flag.Parse()
     // map color codes to color names
     colors := map[string]string{
@@ -79,13 +79,21 @@ func main() {
         "white": "97",
         "default": "39",
     }
+    // color themes
+    color_themes := map[string][]string {
+        "christmas": []string{"lred","lgreen"},
+    }
 
     sigs := make([]chan string, *num)
     // start up the waves
     for i, _ := range sigs {
         color := colors["default"]
         if _, ok := colors[*colorize]; ok {
+            // a default color
             color = colors[*colorize]
+        } else if _, ok:= color_themes[*colorize]; ok {
+            // iterate through theme's colors
+            color = colors[color_themes[*colorize][i % len(color_themes[*colorize])]]
         }
         sigs[i] = make(chan string)
         go Wave(float64(*period), float64(*amp), 0, sigs[i], color)
