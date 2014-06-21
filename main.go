@@ -81,7 +81,7 @@ func main() {
     }
     // color themes
     color_themes := map[string][]string {
-        "christmas": []string{"lred","lgreen"},
+        "christmas": []string{"lred","lgreen","white"},
     }
 
     sigs := make([]chan string, *num)
